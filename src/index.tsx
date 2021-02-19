@@ -1,11 +1,11 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "./index.scss";
-import App from "./App";
+import MoviesNamesApp from "./MoviesNamesApp";
 
 ReactDOM.render(
-    <React.StrictMode>
-        <App />
-    </React.StrictMode>,
+    // <React.StrictMode>
+    // </React.StrictMode>,
+    <MoviesNamesApp />,
     document.getElementById("root")
 );

@@ -1,18 +1,23 @@
-import React, { useEffect, useState } from "react";
+import { ChangeEvent, useContext, useEffect, useState } from "react";
+import { SocketContext } from "../context/SocketContext";
 import { IMovie } from "../interfaces/Movie";
 
-const MovieList = ({ data, vote, deleteMovie, changeMovieName }: any) => {
-    const [movies, setMovies] = useState(data);
+const MovieList = () => {
+    const [movies, setMovies] = useState<IMovie[]>([]);
+
+    const { socket } = useContext(SocketContext);
 
     useEffect(() => {
-        console.log(data);
-        setMovies(data);
-    }, [data]);
+        socket.on("current-movies", (movies: IMovie[]) => {
+            setMovies(movies);
+        });
 
-    const nameChanged = (
-        ev: React.ChangeEvent<HTMLInputElement>,
-        id: string
-    ) => {
+        return () => {
+            socket.off("current-movies");
+        };
+    }, [socket]);
+
+    const nameChanged = (ev: ChangeEvent<HTMLInputElement>, id: string) => {
         const newName = ev.target.value;
         setMovies((movies: IMovie[]) =>
             movies.map((movie) => {
@@ -26,7 +31,15 @@ const MovieList = ({ data, vote, deleteMovie, changeMovieName }: any) => {
     };
 
     const onFocusLost = (id: string, name: string) => {
-        changeMovieName(id, name);
+        socket.emit("change-movie-name", { id, name });
+    };
+
+    const vote = (id: string) => {
+        socket.emit("vote-movie", { id });
+    };
+
+    const deleteMovie = (id: string) => {
+        socket.emit("delete-movie", { id });
     };
 
     const createRows = () => {

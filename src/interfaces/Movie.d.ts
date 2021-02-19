@@ -3,7 +3,3 @@ export interface IMovie {
     name: string;
     votes: number;
 }
-
-export interface IAddMovie {
-    createMovie: (name: string) => void;
-}

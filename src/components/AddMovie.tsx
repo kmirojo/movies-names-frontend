@@ -1,20 +1,21 @@
-import { ChangeEvent, FormEvent, useState } from "react";
-import { IAddMovie } from "../interfaces/Movie";
+import { ChangeEvent, FormEvent, useContext, useState } from "react";
+import { SocketContext } from "../context/SocketContext";
 
-const AddMovie = ({ createMovie }: IAddMovie) => {
-    const [value, setValue] = useState("");
+const AddMovie = () => {
+    const [name, setName] = useState("");
+    const { socket } = useContext(SocketContext);
 
     const onsubmit = (ev: FormEvent<HTMLFormElement>) => {
         ev.preventDefault();
 
-        if (value.trim().length > 0) {
-            createMovie(value);
-            setValue("");
+        if (name.trim().length > 0) {
+            socket.emit("new-movie", { name });
+            setName("");
         }
     };
 
     const onChange = (ev: ChangeEvent<HTMLInputElement>) => {
-        setValue(ev.target.value);
+        setName(ev.target.value);
     };
 
     return (
@@ -25,7 +26,7 @@ const AddMovie = ({ createMovie }: IAddMovie) => {
                     type="text"
                     className="form-control"
                     placeholder="New movie name"
-                    value={value}
+                    value={name}
                     onChange={onChange}
                 />
             </form>
